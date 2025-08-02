@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.ipynb_checkpoints
+
+
+# Misc
+.ruff_cache
+.vscode
+
+# Configs
+redis.conf
+
+# Virtual environments
+.env
+.venv
+
+# Local testing
+test.ipynb
