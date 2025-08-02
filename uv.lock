@@ -46,7 +46,7 @@ wheels = [
 ]
 
 [[package]]
-name = "fast-api-sqlalchemy-blueprint"
+name = "lang_cards_backend"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
