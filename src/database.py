@@ -1,6 +1,8 @@
 from contextlib import asynccontextmanager
+from uuid import uuid4
 
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.pool import NullPool
 
 from src.config import settings
 from src.models import Base
@@ -10,7 +12,11 @@ engine = create_async_engine(
         f"postgresql+asyncpg://{settings.POSTGRES_USER}:"
         f"{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_HOST}:"
         f"{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
-    )
+    ),
+    poolclass=NullPool,
+    connect_args={
+        "prepared_statement_name_func": lambda: f"__asyncpg_{uuid4()}__",
+    },
 )
 async_session = async_sessionmaker(engine)
 
@@ -19,10 +25,12 @@ async def db_init():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
+
 async def get_session():
     async with async_session() as session:
         yield session
-        
+
+
 @asynccontextmanager
 async def get_db():
     db = async_session()

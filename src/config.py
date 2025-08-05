@@ -1,10 +1,25 @@
-from pydantic_settings import BaseSettings
 from pydantic import ConfigDict
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    ## Env variables goes here
-    
+    # LLMs
+    GEMINI_API_KEY: str
+
+    # Cloud Translation
+    GOOGLE_APPLICATION_CREDENTIALS: str
+
+    # Models
+    GOOGLE_TEXT_LITE: str
+    GOOGLE_IMAGE: str
+
+    # Database
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_HOST: str
+    POSTGRES_PORT: str
+    POSTGRES_DB: str
+
     model_config = ConfigDict(env_file=".env")
 
 

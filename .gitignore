@@ -14,6 +14,7 @@ wheels/
 
 # Configs
 redis.conf
+.secrets/
 
 # Virtual environments
 .env
