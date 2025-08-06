@@ -13,6 +13,14 @@ class Settings(BaseSettings):
     GOOGLE_TEXT_LITE: str
     GOOGLE_IMAGE: str
 
+    # SUPABASE
+    SUPABASE_KEY: str
+    SUPABASE_URL: str
+
+    # Images
+    IMAGE_BUCKET: str
+    IMAGE_FOLDER: str
+
     # Database
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str

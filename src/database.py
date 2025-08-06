@@ -2,10 +2,11 @@ from contextlib import asynccontextmanager
 from uuid import uuid4
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.pool import NullPool
+from supabase import AsyncClient, create_async_client
 
 from src.config import settings
-from src.models import Base
 
 engine = create_async_engine(
     url=(
@@ -20,6 +21,8 @@ engine = create_async_engine(
 )
 async_session = async_sessionmaker(engine)
 
+Base = declarative_base()
+
 
 async def db_init():
     async with engine.begin() as conn:
@@ -29,6 +32,10 @@ async def db_init():
 async def get_session():
     async with async_session() as session:
         yield session
+
+
+async def get_supabase_client() -> AsyncClient:
+    return await create_async_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
 
 
 @asynccontextmanager

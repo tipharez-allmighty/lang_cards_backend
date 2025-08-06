@@ -1,9 +1,14 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 
+import src.decks.models
+import src.flashcards.models
+import src.users.models
 from src.database import db_init
-from src.router import router
+from src.decks.router import router as decks_router
+from src.flashcards.router import router as flashcards_router
+from src.users.router import router as users_router
 
 
 @asynccontextmanager
@@ -14,7 +19,12 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-app.include_router(router)
+api_router = APIRouter(prefix="/api", tags=["Endpoints"])
+
+app.include_router(api_router)
+api_router.include_router(users_router)
+api_router.include_router(decks_router)
+api_router.include_router(flashcards_router)
 
 
 @app.get("/health", tags=["Health"])
