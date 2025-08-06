@@ -50,7 +50,7 @@ class Word(Base):
     word: Mapped[str] = mapped_column(Text, nullable=False)
 
     image: Mapped["Image"] = relationship(
-        "Image", back_populates="words", passive_deletes=True
+        "Image", back_populates="words", lazy="joined", passive_deletes=True
     )
     flashcards: Mapped[list[FlashCard]] = relationship(
         "FlashCard", back_populates="word", cascade="all, delete"
@@ -67,7 +67,7 @@ class Image(Base):
     )
     url: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
 
-    image_path: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
+    path: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
 
     words: Mapped[list["Word"]] = relationship(
         "Word", back_populates="image", cascade="all, delete"

@@ -36,7 +36,7 @@ async def text_generation(word: str, target_lang, native_lang: str):
     )
 
 
-async def image_generation(word: str):
+async def image_generation(word: str) -> bytes | None:
     response = await gemini_client.aio.models.generate_content(
         model=settings.GOOGLE_IMAGE,
         contents=IMAGE_PROMPT.format(word=word),
@@ -51,3 +51,4 @@ async def image_generation(word: str):
             # image.save(buffer, format="PNG")
             # base64_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
             return part.inline_data.data
+    return None
