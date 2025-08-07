@@ -10,6 +10,8 @@ This project adheres to the recommended practices from the [FastAPI Best Practic
 Tech Stack
 
     Backend: FastAPI, SQLAlchemy
+    
+    LLM: Mirascope, Gemini
 
     Database: PostgreSQL
 
