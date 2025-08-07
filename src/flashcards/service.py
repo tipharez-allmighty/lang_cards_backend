@@ -105,7 +105,7 @@ async def create_flashcard(
         except SQLAlchemyError as e:
             await db.rollback()
             raise e
-    return flash_card
+        return flash_card
 
 
 async def get_flash_cards_by_list(
