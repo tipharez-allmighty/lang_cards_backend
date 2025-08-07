@@ -6,9 +6,6 @@ class Settings(BaseSettings):
     # LLMs
     GEMINI_API_KEY: str
 
-    # Cloud Translation
-    GOOGLE_APPLICATION_CREDENTIALS: str
-
     # Models
     GOOGLE_TEXT_LITE: str
     GOOGLE_IMAGE: str
