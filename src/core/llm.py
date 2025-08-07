@@ -44,11 +44,5 @@ async def image_generation(word: str) -> bytes | None:
     )
     for part in response.candidates[0].content.parts:
         if part.inline_data is not None:
-            image = Image.open(BytesIO((part.inline_data.data)))
-            image.save(f"{word}-{random.randint(1, 1000)}.png")
-            # image.show()
-            # buffer = BytesIO()
-            # image.save(buffer, format="PNG")
-            # base64_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
             return part.inline_data.data
     return None
