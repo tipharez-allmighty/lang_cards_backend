@@ -25,7 +25,3 @@ async def stream_deck_progress(
         media_type="text/event-stream",
     )
 
-
-@router.get("/hello")
-async def hello_world():
-    return {"hello": "word"}
