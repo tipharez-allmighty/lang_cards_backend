@@ -1,6 +1,6 @@
 # Project Overview
 
-Lang Cards is a work-in-progress language learning backend built with FastAPI. The goal is to deliver AI-generated vocabulary cards enriched with images and context, powered by Gemini models.
+Lang Cards is a language learning app backend built with FastAPI. It creates AI-generated vocabulary cards with images and context using Gemini models.
 
 A witty aspect of the project is its efficient handling of image reuse across different languages. For example, words like "cat" / "貓" / "кіт" share the same concept—and thus the same image—helping reduce unnecessary image generation costs while preserving multilingual relevance and consistency.
 
@@ -27,10 +27,11 @@ Requirements
 
     A Supabase storage bucket (for storing and serving word images)
 
-    Your own Google API key for Gemini models (if required)
------
+    Your own Google API key for Gemini models
 
-Create a .env file in the project root as specified in env.example
+    Create a .env file in the project root as specified in env.example
+
+-----
 
 -----
 
