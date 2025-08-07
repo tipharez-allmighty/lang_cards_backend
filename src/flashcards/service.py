@@ -1,11 +1,13 @@
 import asyncio
 
-from sqlalchemy import select
+from sqlalchemy import and_, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from supabase import AsyncClient
 
 from src.core.llm import image_generation, text_generation
+from src.database import async_session
 from src.flashcards.image_storage import get_image_url, remove_images, upload_image
 from src.flashcards.models import FlashCard, Image, Word
 
@@ -18,12 +20,26 @@ async def get_image(db: AsyncSession, word: str) -> Image | None:
     return image.scalar_one_or_none()
 
 
+async def get_word(db: AsyncSession, word: str):
+    result = await db.execute(select(Word).where(Word.word == word))
+
+    return result.scalar_one_or_none()
+
+
+async def get_word_with_image(db: AsyncSession, word: str):
+    result = await db.execute(
+        select(Word).options(selectinload(Word.image)).where(Word.word == word)
+    )
+
+    return result.scalar_one_or_none()
+
+
 async def get_or_create_image_with_word(
     db: AsyncSession, supabase: AsyncClient, word: str
 ) -> Word:
-    image = await get_image(db, word)
-    if image:
-        return image
+    existing_word = await get_word_with_image(db, word)
+    if existing_word:
+        return existing_word
     image_bytes = await image_generation(word)
     if not image_bytes:
         raise ValueError(f"No image generated for {word}")
@@ -31,15 +47,11 @@ async def get_or_create_image_with_word(
     image_url = await get_image_url(supabase, image_path)
 
     new_image = Image(path=image_path, url=image_url)
+    new_word = Word(word=word, image=new_image)
 
     try:
         db.add(new_image)
-        await db.flush()
-
-        new_word = Word(word=word, image=new_image)
-
         db.add(new_word)
-
         await db.commit()
         await db.refresh(new_image)
         await db.refresh(new_word)
@@ -53,39 +65,68 @@ async def get_or_create_image_with_word(
         )
     return new_word
 
+
 async def create_flashcard(
-    db: AsyncSession,
     supabase: AsyncClient,
     word: str,
     target_lang: str,
     native_lang: str,
 ) -> FlashCard:
     text_data = asyncio.create_task(text_generation(word, target_lang, native_lang))
-    word_with_image_data = asyncio.create_task(
-        get_or_create_image_with_word(db, supabase, word)
-    )
 
-    text_result, word_with_image_result = await asyncio.gather(
-        text_data, word_with_image_data
-    )
-    new_word = Word(
-        word=text_result.word_translation, image=word_with_image_result.image
-    )
-
-    try:
-        db.add(new_word)
-
-        flash_card = FlashCard(
-            word=word_with_image_result,
-            native_lang=native_lang,
-            target_lang=target_lang,
-            data=text_result.model_dump(),
+    async with async_session() as db:
+        word_with_image_data = asyncio.create_task(
+            get_or_create_image_with_word(db, supabase, word)
         )
 
-        db.add(flash_card)
+        text_result, word_with_image_result = await asyncio.gather(
+            text_data, word_with_image_data
+        )
+        translated_word = await get_word(db, word)
 
-        await db.commit()
-    except SQLAlchemyError as e:
-        await db.rollback()
-        raise e
+        try:
+            if not translated_word:
+                new_word = Word(
+                    word=text_result.word_translation,
+                    image=word_with_image_result.image,
+                )
+                db.add(new_word)
+            flash_card = FlashCard(
+                word=word_with_image_result,
+                native_lang=native_lang,
+                target_lang=target_lang,
+                data=text_result.model_dump(),
+            )
+
+            db.add(flash_card)
+
+            await db.commit()
+            await db.refresh(flash_card)
+        except SQLAlchemyError as e:
+            await db.rollback()
+            raise e
     return flash_card
+
+
+async def get_flash_cards_by_list(
+    db: AsyncSession, target_lang: str, native_lang: str, word_list: list[str]
+) -> tuple[list[FlashCard], list[str]]:
+    flashcards = await db.execute(
+        select(FlashCard)
+        .join(FlashCard.word)
+        .options(selectinload(FlashCard.word))
+        .where(
+            and_(
+                FlashCard.target_lang == target_lang,
+                FlashCard.native_lang == native_lang,
+                Word.word.in_(word_list),
+            )
+        )
+    )
+    found_flashcards = list(flashcards.scalars().all())
+    missing_words = []
+    if len(found_flashcards) < len(word_list):
+        found_words = {flashcard.word.word for flashcard in found_flashcards}
+        word_set = set(word_list)
+        missing_words = list(word_set - found_words)
+    return found_flashcards, missing_words

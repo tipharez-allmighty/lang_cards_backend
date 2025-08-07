@@ -18,13 +18,12 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+api_router = APIRouter(prefix="/api")
 
-api_router = APIRouter(prefix="/api", tags=["Endpoints"])
-
-app.include_router(api_router)
 api_router.include_router(users_router)
 api_router.include_router(decks_router)
 api_router.include_router(flashcards_router)
+app.include_router(api_router)
 
 
 @app.get("/health", tags=["Health"])

@@ -1,4 +1,4 @@
-WORDS_LIST_PROMPT = """
+WORD_LIST_PROMPT = """
 You are a language processing assistant. Your task is to extract a list of valid words from a given text and provide a creative title for the list.
 If you cannot confidently identify one main language, return all fields as null.
 
@@ -16,8 +16,8 @@ Rules:
 The output must be a JSON object with this format:
 {{
   "language": "zh" | "en" | "fr" | etc. | null,
-  "title": "a creative and relevant title or null",
-  "words_list": ["cleaned", "words", "only"] or null
+  "title": "a creative and relevant title",
+  "words": ["cleaned", "words", "only"] or null
 }}
 """
 

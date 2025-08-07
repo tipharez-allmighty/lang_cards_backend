@@ -1,38 +1,88 @@
 import asyncio
+from uuid import UUID
 
-from src.core.llm import image_generation, text_generation, words_list_generation
-from src.core.schemas import FlashCardLLMOut
+from fastapi import Request
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
+from supabase import AsyncClient
+
+from src.core.llm import word_list_generation
+from src.decks.models import Deck
+from src.flashcards.models import FlashCard
+from src.flashcards.service import create_flashcard, get_flash_cards_by_list
+from src.users.service import get_profile_by_id
+
+async def upload_deck(
+    db: AsyncSession, user_id: UUID, title: str, flashcards: list[FlashCard]
+) -> Deck:
+    profile = await get_profile_by_id(db, user_id)
+    try:
+        new_deck = Deck(title=title, flashcards=flashcards)
+        if profile:
+            new_deck.profiles.append(profile)
+
+        db.add(new_deck)
+
+        await db.commit()
+        await db.refresh(new_deck)
+    except SQLAlchemyError as e:
+        await db.rollback()
+        raise e
+
+    return new_deck
 
 
-async def get_card(word: str, target_lang: str, native_lang: str):
-    card_text = asyncio.create_task(text_generation(word, target_lang, native_lang))
-    card_image = asyncio.create_task(image_generation(word))
+async def create_deck(
+    db: AsyncSession,
+    supabase: AsyncClient,
+    user_id: UUID,
+    user_input: str,
+    native_lang: str,
+):
+    word_list = await word_list_generation(user_input)
 
-    text_result, image_result = await asyncio.gather(card_text, card_image)
-    if not text_result:
-        print("NO TEXT")
-    if not image_result:
-        print("NO IMAGE")
-    return FlashCardLLMOut(**text_result.model_dump(), image=image_result)
-
-
-async def main(input: str, native_lang):
-    words_list = await words_list_generation(input)
-    if words_list.language is None:
-        raise Exception("String is invalid. Use same language for all the words.")
-
-    print(words_list.language)
-    tasks = [
-        asyncio.create_task(get_card(word, words_list.language, native_lang))
-        for word in words_list.words
-    ]
-
-    results = await asyncio.gather(*tasks)
-    print(words_list.title)
-    print(
-        [(word_card.word, word_card.hint, word_card.sentences) for word_card in results]
+    flashcards, missing_words = await get_flash_cards_by_list(
+        db,
+        target_lang=word_list.language,
+        native_lang=native_lang,
+        word_list=word_list.words,
     )
 
+    if missing_words:
+        tasks = [
+            asyncio.create_task(
+                create_flashcard(
+                    supabase=supabase,
+                    word=word,
+                    target_lang=word_list.language,
+                    native_lang=native_lang,
+                )
+            )
+            for word in missing_words
+        ]
 
-if __name__ == "__main__":
-    asyncio.run(main(input="This is a car and this is the train", native_lang="en"))
+        flashcards_tasks = asyncio.as_completed(tasks)
+        counter = [len(flashcards), len(word_list.words)]
+        async for task in flashcards_tasks:
+            flashcard = await task
+            flashcards.append(flashcard)
+            counter[0] += 1
+            yield counter
+
+    yield await upload_deck(db, user_id, word_list.title, flashcards)
+
+
+async def deck_generator(
+    request: Request,
+    db: AsyncSession,
+    supabase: AsyncClient,
+    user_id: UUID,
+    user_input: str,
+    native_lang: str,
+):
+    async for event in create_deck(
+        db, supabase, user_id=user_id, user_input=user_input, native_lang=native_lang
+    ):
+        yield f"data: {event}\n\n"
+        if await request.is_disconnected():
+            break

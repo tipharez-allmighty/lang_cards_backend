@@ -17,6 +17,7 @@ engine = create_async_engine(
     poolclass=NullPool,
     connect_args={
         "prepared_statement_name_func": lambda: f"__asyncpg_{uuid4()}__",
+        "statement_cache_size": 0,
     },
 )
 async_session = async_sessionmaker(engine)

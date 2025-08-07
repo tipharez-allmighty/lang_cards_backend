@@ -1,10 +1,27 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
+
+from src.exceptions import LLMResponseError
 
 
-class WordsList(BaseModel):
+class WordList(BaseModel):
     language: str | None = None
-    title: str | None = None
+    title: str
     words: list[str] | None = None
+
+    @model_validator(mode="after")
+    def check_llm_response(self):
+        errors = []
+        if self.language is None or self.language == "null":
+            errors.append(
+                "Invalid user input: please use the same language for all words."
+            )
+        if self.words is None:
+            errors.append("LLM failed to generate list of words.")
+
+        if errors:
+            raise LLMResponseError(" | ".join(errors))
+
+        return self
 
 
 class Sentences(BaseModel):

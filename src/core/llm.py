@@ -8,8 +8,8 @@ from mirascope import llm
 from PIL import Image
 
 from src.config import settings
-from src.core.prompts import IMAGE_PROMPT, WORD_CARD_PROMPT, WORDS_LIST_PROMPT
-from src.core.schemas import FlashCardLLM, WordsList
+from src.core.prompts import IMAGE_PROMPT, WORD_CARD_PROMPT, WORD_LIST_PROMPT
+from src.core.schemas import FlashCardLLM, WordList
 
 gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
@@ -18,10 +18,10 @@ gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
     client=gemini_client,
     provider="google",
     model=settings.GOOGLE_TEXT_LITE,
-    response_model=WordsList,
+    response_model=WordList,
 )
-async def words_list_generation(words: str):
-    return WORDS_LIST_PROMPT.format(words=words)
+async def word_list_generation(words: str):
+    return WORD_LIST_PROMPT.format(words=words)
 
 
 @llm.call(
