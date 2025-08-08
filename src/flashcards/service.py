@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 from supabase import AsyncClient
 
 from src.core.llm import image_generation, text_generation
-from src.database import async_session
+from src.database import async_session, get_db
 from src.flashcards.image_storage import get_image_url, remove_images, upload_image
 from src.flashcards.models import FlashCard, Image, Word
 
@@ -74,7 +74,7 @@ async def create_flashcard(
 ) -> FlashCard:
     text_data = asyncio.create_task(text_generation(word, target_lang, native_lang))
 
-    async with async_session() as db:
+    async with get_db() as db:
         word_with_image_data = asyncio.create_task(
             get_or_create_image_with_word(db, supabase, word)
         )
