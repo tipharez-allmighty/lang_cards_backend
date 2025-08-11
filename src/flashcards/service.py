@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from supabase import AsyncClient
 
+from src.exceptions import LLMResponseError
 from src.core.llm import image_generation, text_generation
 from src.database import get_db
 from src.flashcards.image_storage import get_image_url, remove_images, upload_image
@@ -42,7 +43,7 @@ async def get_or_create_image_with_word(
         return existing_word
     image_bytes = await image_generation(word)
     if not image_bytes:
-        raise ValueError(f"No image generated for {word}")
+        raise LLMResponseError(f"No image generated for {word}")
     image_path = await upload_image(supabase, image_bytes)
     image_url = await get_image_url(supabase, image_path)
 
