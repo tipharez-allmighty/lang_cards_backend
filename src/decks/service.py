@@ -8,6 +8,7 @@ from supabase import AsyncClient
 
 from src.core.llm import word_list_generation
 from src.decks.models import Deck
+from src.decks.schemas import DeckBase
 from src.flashcards.models import FlashCard
 from src.flashcards.service import create_flashcard, get_flash_cards_by_list
 from src.users.service import get_profile_by_id
@@ -80,9 +81,12 @@ async def deck_generator(
     user_input: str,
     native_lang: str,
 ):
-    async for event in create_deck(
+    async for data in create_deck(
         db, supabase, user_id=user_id, user_input=user_input, native_lang=native_lang
     ):
-        yield f"data: {event}\n\n"
+        if isinstance(data, Deck):
+            yield f"event: deck\ndata: {DeckBase.model_validate(data).model_dump_json()}\n\n"
+        else:
+            yield f"event: loading\ndata: {data}\n\n"
         if await request.is_disconnected():
             break

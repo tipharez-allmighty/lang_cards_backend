@@ -34,10 +34,11 @@ class Deck(Base):
     )
 
     flashcards: Mapped[list["FlashCard"]] = relationship(
-        "FlashCard", secondary=decks_flashcards_table, back_populates="decks"
+        "FlashCard", secondary=decks_flashcards_table, back_populates="decks",
+        lazy="selectin"
     )
     profiles: Mapped[list["Profile"]] = relationship(
-        "Profile", secondary=profiles_decks_table, back_populates="decks"
+        "Profile", secondary=profiles_decks_table, back_populates="decks",
     )
 
     def __repr__(self):

@@ -28,7 +28,9 @@ class FlashCard(Base):
     )
 
     word: Mapped["Word"] = relationship(
-        "Word", back_populates="flashcards", passive_deletes=True
+        "Word", back_populates="flashcards", passive_deletes=True,
+        lazy="joined"
+        
     )
     decks: Mapped[list["Deck"]] = relationship(
         "Deck", secondary=decks_flashcards_table, back_populates="flashcards"
@@ -53,7 +55,7 @@ class Word(Base):
         "Image", back_populates="words", lazy="joined", passive_deletes=True
     )
     flashcards: Mapped[list[FlashCard]] = relationship(
-        "FlashCard", back_populates="word", cascade="all, delete"
+        "FlashCard", back_populates="word", cascade="all, delete",
     )
 
     def __repr__(self):

@@ -13,11 +13,11 @@ from src.flashcards.models import FlashCard, Image, Word
 
 
 async def get_image(db: AsyncSession, word: str) -> Image | None:
-    image = await db.execute(
+    result = await db.execute(
         select(Image).join(Word, Word.image_id == Image.id).where(Word.word == word)
     )
 
-    return image.scalar_one_or_none()
+    return result.scalar_one_or_none()
 
 
 async def get_word(db: AsyncSession, word: str):
