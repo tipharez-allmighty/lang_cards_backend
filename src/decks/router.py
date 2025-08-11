@@ -24,4 +24,3 @@ async def stream_deck_progress(
         deck_generator(request, db, supabase, user_id, user_input, native_lang),
         media_type="text/event-stream",
     )
-

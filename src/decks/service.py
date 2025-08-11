@@ -13,6 +13,7 @@ from src.flashcards.models import FlashCard
 from src.flashcards.service import create_flashcard, get_flash_cards_by_list
 from src.users.service import get_profile_by_id
 
+
 async def upload_deck(
     db: AsyncSession, user_id: UUID, title: str, flashcards: list[FlashCard]
 ) -> Deck:

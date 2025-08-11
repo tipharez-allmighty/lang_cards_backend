@@ -1,8 +1,10 @@
 from datetime import datetime
 from uuid import UUID
+
 from pydantic import BaseModel
 
 from src.flashcards.schemas import FlashCardBase
+
 
 class DeckBase(BaseModel):
     id: UUID

@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 from supabase import AsyncClient
 
 from src.core.llm import image_generation, text_generation
-from src.database import async_session, get_db
+from src.database import get_db
 from src.flashcards.image_storage import get_image_url, remove_images, upload_image
 from src.flashcards.models import FlashCard, Image, Word
 
