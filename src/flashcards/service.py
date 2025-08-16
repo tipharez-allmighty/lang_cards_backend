@@ -3,7 +3,7 @@ import asyncio
 from sqlalchemy import and_, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import noload
 from supabase import AsyncClient
 
 from src.exceptions import LLMResponseError
@@ -22,14 +22,14 @@ async def get_image(db: AsyncSession, word: str) -> Image | None:
 
 
 async def get_word(db: AsyncSession, word: str):
-    result = await db.execute(select(Word).where(Word.word == word))
+    result = await db.execute(select(Word).options(noload(Word.image)).where(Word.word == word))
 
     return result.scalar_one_or_none()
 
 
 async def get_word_with_image(db: AsyncSession, word: str):
     result = await db.execute(
-        select(Word).options(selectinload(Word.image)).where(Word.word == word)
+        select(Word).where(Word.word == word)
     )
 
     return result.scalar_one_or_none()
@@ -83,7 +83,7 @@ async def create_flashcard(
         text_result, word_with_image_result = await asyncio.gather(
             text_data, word_with_image_data
         )
-        translated_word = await get_word(db, word)
+        translated_word = await get_word(db, text_result.word_translation)
 
         try:
             if not translated_word:
@@ -115,7 +115,6 @@ async def get_flash_cards_by_list(
     flashcards = await db.execute(
         select(FlashCard)
         .join(FlashCard.word)
-        .options(selectinload(FlashCard.word))
         .where(
             and_(
                 FlashCard.target_lang == target_lang,
