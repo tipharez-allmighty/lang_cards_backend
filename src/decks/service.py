@@ -50,27 +50,6 @@ async def create_deck(
         word_list=word_list.words,
     )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     if missing_words:
         tasks = [
             asyncio.create_task(
