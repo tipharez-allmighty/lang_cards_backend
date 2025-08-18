@@ -7,6 +7,7 @@ from src.decks.schemas import DeckBase
 from src.decks.service import create_deck
 from supabase import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends
 
 router = APIRouter(prefix="/decks", tags=["Decks"])
 
