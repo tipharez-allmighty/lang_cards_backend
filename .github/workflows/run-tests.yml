@@ -8,18 +8,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up latest Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
+      - uses: actions/checkout@v4
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v1
+        uses: astral-sh/setup-uv@v6
 
-      - name: Install dependencies
-        run: uv sync --dev
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
 
-      - name: Run pytest
-        run: uv run pytest
+      - name: Run tests
+        run: uv run pytest tests
