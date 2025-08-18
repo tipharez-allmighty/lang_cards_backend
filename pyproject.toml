@@ -23,4 +23,11 @@ dev = [
     "ipykernel>=6.30.1",
     "notebook>=7.4.5",
     "pytest>=8.4.1",
+    "pytest-mock>=3.14.1",
 ]
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
+pythonpath = "."

@@ -1,15 +1,14 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ImageBase(BaseModel):
     id: UUID
     url: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class WordBase(BaseModel):
@@ -17,8 +16,7 @@ class WordBase(BaseModel):
     word: str
     image: ImageBase
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class FlashCardBase(BaseModel):
@@ -29,5 +27,4 @@ class FlashCardBase(BaseModel):
     created_at: datetime
     word: WordBase
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
