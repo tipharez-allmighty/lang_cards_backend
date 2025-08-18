@@ -1,8 +1,8 @@
 from uuid import UUID, uuid4
+from src.database import get_session, get_supabase_client
 
 from fastapi import APIRouter, Depends
 
-from src.database import get_session, get_supabase_client
 from src.decks.schemas import DeckBase
 from src.decks.service import create_deck
 from supabase import AsyncClient
