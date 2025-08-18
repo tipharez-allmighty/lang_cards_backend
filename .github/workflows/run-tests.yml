@@ -18,3 +18,16 @@ jobs:
 
       - name: Run tests
         run: uv run pytest
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_TEXT_LITE: ${{ vars.GOOGLE_TEXT_LITE }}
+          GOOGLE_IMAGE: ${{ vars.GOOGLE_IMAGE }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          IMAGE_BUCKET: ${{ vars.IMAGE_BUCKET }}
+          IMAGE_FOLDER: ${{ vars.IMAGE_FOLDER }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
+          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
