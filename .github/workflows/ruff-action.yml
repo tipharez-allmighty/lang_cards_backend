@@ -15,4 +15,4 @@ jobs:
         uses: astral-sh/ruff-action@v3
         with:
           version: "latest"
-          args: "--select I --fix"
+          args: "check --select I --fix"
