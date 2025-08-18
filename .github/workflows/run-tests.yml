@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: '3.x'
       - name: Install dependencies
-        run: uv sync --dev uv add --dev pytest-md pytest-emoji
+        run: uv sync --dev && uv add --dev pytest-md pytest-emoji
       - uses: pavelzw/pytest-action@v2
         with:
           emoji: false
