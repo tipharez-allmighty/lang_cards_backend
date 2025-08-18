@@ -7,7 +7,6 @@ from supabase import AsyncClient
 from src.database import get_session, get_supabase_client
 from src.decks.schemas import DeckBase
 from src.decks.service import create_deck
-from supabase import AsyncClient
 
 router = APIRouter(prefix="/decks", tags=["Decks"])
 
