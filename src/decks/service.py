@@ -63,31 +63,7 @@ async def create_deck(
             for word in missing_words
         ]
 
-        flashcards_tasks = asyncio.as_completed(tasks)
-        counter = [len(flashcards), len(word_list.words)]
-        async for task in flashcards_tasks:
-            flashcard = await task
-            flashcards.append(flashcard)
-            counter[0] += 1
-            yield counter
+        new_flashcards = await asyncio.gather(*tasks)
+        flashcards.extend(new_flashcards)
 
-    yield await upload_deck(db, user_id, word_list.title, flashcards)
-
-
-async def deck_generator(
-    request: Request,
-    db: AsyncSession,
-    supabase: AsyncClient,
-    user_id: UUID,
-    user_input: str,
-    native_lang: str,
-):
-    async for data in create_deck(
-        db, supabase, user_id=user_id, user_input=user_input, native_lang=native_lang
-    ):
-        if isinstance(data, Deck):
-            yield f"event: deck\ndata: {DeckBase.model_validate(data).model_dump_json()}\n\n"
-        else:
-            yield f"event: loading\ndata: {data}\n\n"
-        if await request.is_disconnected():
-            break
+    return await upload_deck(db, user_id, word_list.title, flashcards)

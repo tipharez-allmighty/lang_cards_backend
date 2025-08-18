@@ -1,26 +1,23 @@
 from uuid import UUID, uuid4
 
-from fastapi import APIRouter, Depends, Request
-from fastapi.responses import StreamingResponse
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from supabase import AsyncClient
 
 from src.database import get_session, get_supabase_client
-from src.decks.service import deck_generator
+from src.decks.schemas import DeckBase
+from src.decks.service import create_deck
 
 router = APIRouter(prefix="/decks", tags=["Decks"])
 
 
-@router.get("/stream")
-async def stream_deck_progress(
-    request: Request,
+@router.post("/", response_model=DeckBase)
+async def generate_deck(
     db: AsyncSession = Depends(get_session),
     supabase: AsyncClient = Depends(get_supabase_client),
     user_id: UUID = uuid4(),
     user_input: str = "你好，世界",
     native_lang: str = "en",
-):
-    return StreamingResponse(
-        deck_generator(request, db, supabase, user_id, user_input, native_lang),
-        media_type="text/event-stream",
-    )
+) -> DeckBase:
+    deck = await create_deck(db, supabase, user_id, user_input, native_lang)
+    return DeckBase.model_validate(deck)
