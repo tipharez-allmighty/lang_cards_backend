@@ -26,3 +26,34 @@ def mock_create_deck(mocker):
         return_value=mock_valid_deck,
     )
     return mock_deck
+
+
+@pytest.fixture
+def mock_upload_deck(mocker):
+    mock_deck = mocker.patch("src.decks.service.upload_deck", new_callable=AsyncMock)
+    return mock_deck
+
+
+@pytest.fixture
+def mock_word_list_generation(mocker):
+    mock_list = mocker.patch(
+        "src.decks.service.word_list_generation",
+        new_callable=AsyncMock,
+    )
+    return mock_list
+
+
+@pytest.fixture
+def mock_get_flash_cards_by_list(mocker):
+    mock_flash_cards = mocker.patch(
+        "src.decks.service.get_flash_cards_by_list", new_callable=AsyncMock
+    )
+    return mock_flash_cards
+
+
+@pytest.fixture
+def mock_create_flashcard(mocker):
+    mock_flash_card = mocker.patch(
+        "src.decks.service.create_flashcard", new_callable=AsyncMock
+    )
+    return mock_flash_card

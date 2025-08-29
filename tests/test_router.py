@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 
 from src.decks.router import router
 from src.main import app
+from tests.mocks import mock_user_id
 
 app.include_router(router)
 client = TestClient(app)
@@ -21,7 +22,7 @@ def test_generate_deck_parametrized(
     response = client.post(
         "/decks/",
         json={
-            "user_id": "b6a7e0a0-0000-4100-8000-000000000000",
+            "user_id": str(mock_user_id),
             "user_input": user_input,
             "native_lang": native_lang,
         },
