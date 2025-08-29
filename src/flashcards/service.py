@@ -21,7 +21,7 @@ async def get_image(db: AsyncSession, word: str) -> Image | None:
     return result.scalar_one_or_none()
 
 
-async def get_word(db: AsyncSession, word: str):
+async def get_word(db: AsyncSession, word: str) -> Word:
     result = await db.execute(
         select(Word).options(noload(Word.image)).where(Word.word == word)
     )

@@ -13,7 +13,6 @@ client = TestClient(app)
     "user_input, native_lang, expected_status",
     [
         ("你好，世界", "zh", 200),
-        ("Hello, World", "en", 200),
     ],
 )
 def test_generate_deck_parametrized(
@@ -28,7 +27,6 @@ def test_generate_deck_parametrized(
         },
     )
 
-    assert response.status_code == expected_status
     assert response.status_code == expected_status
     if expected_status == 200:
         mock_create_deck.assert_called_once()

@@ -7,6 +7,7 @@ from sqlalchemy.pool import NullPool
 from supabase import AsyncClient, create_async_client
 
 from src.config import settings
+sdfsdf
 
 engine = create_async_engine(
     url=(
