@@ -5,6 +5,7 @@ on: [push]
 jobs:
   build:
     name: Run tests
+    environment: main_env
     runs-on: ubuntu-latest
 
     steps:
