@@ -1,0 +1,18 @@
+services:  # Top-level key
+  redis:   # Nested under services
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  worker:  # MUST be nested under services, at the same level as redis
+    build: .
+    # Use 'uv run' to avoid the "no such file" error from before
+    command: uv run taskiq worker src.broker:broker --fs-discover
+    volumes:
+      - .:/app
+      # This anonymous volume prevents your local .venv from conflicting
+      - /app/.venv  
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis

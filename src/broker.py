@@ -1,6 +1,6 @@
 from taskiq_redis import RedisAsyncResultBackend, ListQueueBroker
 
-redis_url = "redis://localhost:6379"
+from src.config import settings
 
-result_backend = RedisAsyncResultBackend(redis_url)
-broker = ListQueueBroker(redis_url).with_result_backend(result_backend)
+result_backend = RedisAsyncResultBackend(settings.REDIS_URL)
+broker = ListQueueBroker(settings.REDIS_URL).with_result_backend(result_backend)

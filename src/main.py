@@ -15,10 +15,10 @@ from src.broker import broker
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await db_init()
-    if not broker.is_worker_process():
+    if not broker.is_worker_process:
         await broker.startup()
     yield
-    if not broker.is_worker_process():
+    if not broker.is_worker_process:
         await broker.shutdown()
 
 
