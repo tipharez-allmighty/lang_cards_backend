@@ -1,19 +1,17 @@
 import asyncio
 from uuid import UUID
 
-from fastapi import Request
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from supabase import AsyncClient
 
 from src.core.llm import word_list_generation
 from src.decks.models import Deck
-from src.decks.schemas import DeckBase
 from src.flashcards.models import FlashCard
 from src.flashcards.service import create_flashcard, get_flash_cards_by_list
 from src.users.service import get_profile_by_id
 
-
+sdfsdf``
 async def upload_deck(
     db: AsyncSession, user_id: UUID, title: str, flashcards: list[FlashCard]
 ) -> Deck:
