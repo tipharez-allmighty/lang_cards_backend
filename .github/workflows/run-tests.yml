@@ -31,3 +31,4 @@ jobs:
           POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
           POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
           POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+          REDIS_URL: ${{ vars.REDIS_URL}}
