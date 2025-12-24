@@ -22,3 +22,4 @@ redis.conf
 
 # Local testing
 test.ipynb
+docker-compose.local.yaml

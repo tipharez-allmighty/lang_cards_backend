@@ -9,12 +9,17 @@ from src.database import db_init
 from src.decks.router import router as decks_router
 from src.flashcards.router import router as flashcards_router
 from src.users.router import router as users_router
+from src.broker import broker
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await db_init()
+    if not broker.is_worker_process:
+        await broker.startup()
     yield
+    if not broker.is_worker_process:
+        await broker.shutdown()
 
 
 app = FastAPI(lifespan=lifespan, root_path="/api")

@@ -1,9 +1,10 @@
 from datetime import datetime
 from uuid import uuid4
 
-from src.core.schemas import WordList
+from src.core.schemas import WordList, FlashCardLLM, Sentences
 from src.decks.schemas import DeckBase
 from src.flashcards.schemas import FlashCardBase, ImageBase, WordBase
+from src.flashcards.models import Word, Image
 
 mock_user_id = uuid4()
 
@@ -14,7 +15,10 @@ mock_valid_image2 = ImageBase(id=uuid4(), url="https://example.com/image2.png")
 mock_valid_word1 = WordBase(id=uuid4(), word="Hello", image=mock_valid_image1)
 mock_valid_word2 = WordBase(id=uuid4(), word="World", image=mock_valid_image2)
 
-
+mock_valid_image_orm1 = Image(**mock_valid_image1.model_dump(), path="/path1")
+mock_valid_image_orm2 = Image(**mock_valid_image2.model_dump(), path="/path2")
+mock_vaid_word_orm1 = Word(word=mock_valid_word1.word, image=mock_valid_image_orm1)
+mock_vaid_word_orm2 = Word(word=mock_valid_word2.word, image=mock_valid_image_orm2)
 
 mock_missing_words = ["word1", "word2"]
 
@@ -52,4 +56,18 @@ mock_valid_word_list = WordList(
     language="English",
     title="Fruits Vocabulary",
     words=["apple", "banana", "orange", "grape", "pear"],
+)
+
+mock_text_data = FlashCardLLM(
+    hint="A common fruit",
+    word="apple",
+    word_romanization="píngguǒ",
+    word_translation="蘋果",
+    sentences=[
+        Sentences(
+            sentence="I like apples.",
+            sentence_romanization="Wǒ xǐhuān píngguǒ.",
+            sentence_translation="我喜歡蘋果。",
+        )
+    ],
 )

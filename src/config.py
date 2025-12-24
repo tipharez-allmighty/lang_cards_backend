@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     IMAGE_BUCKET: str
     IMAGE_FOLDER: str
 
+    # Redis
+    REDIS_URL: str
     # Database
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str

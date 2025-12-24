@@ -21,7 +21,7 @@ def mock_db():
 @pytest.fixture
 def mock_create_deck(mocker):
     mock_deck = mocker.patch(
-        "src.decks.router.create_deck",
+        "src.decks.tasks.create_deck_task",
         new_callable=AsyncMock,
         return_value=mock_valid_deck,
     )
@@ -57,3 +57,25 @@ def mock_create_flashcard(mocker):
         "src.decks.service.create_flashcard", new_callable=AsyncMock
     )
     return mock_flash_card
+
+
+@pytest.fixture
+def mock_text_generation(mocker):
+    mock_text = mocker.patch(
+        "src.flashcards.service.text_generation", new_callable=AsyncMock
+    )
+    return mock_text
+
+
+@pytest.fixture
+def mock_get_or_create_image_with_word(mocker):
+    word_image = mocker.patch(
+        "src.flashcards.service.get_or_create_image_with_word", new_callable=AsyncMock
+    )
+    return word_image
+
+
+@pytest.fixture
+def mock_get_word(mocker):
+    word = mocker.patch("src.flashcards.service.get_word", new_callable=AsyncMock)
+    return word

@@ -17,15 +17,17 @@ async def test_create_deck(
     mock_upload_deck,
     missing_words,
 ):
-    mock_word_list_generation.return_value = mocks.mock_valid_word_list
     mock_get_flash_cards_by_list.return_value = (
         mocks.mock_valid_flashcards,
         missing_words,
     )
-    mock_upload_deck.return_value = mocks.mock_valid_deck
 
     deck = await create_deck(
-        mock_db, mock_supabase, mocks.mock_user_id, mocks.mock_user_input, mocks.mock_target_lang
+        mock_db,
+        mock_supabase,
+        mocks.mock_user_id,
+        mocks.mock_user_input,
+        mocks.mock_target_lang,
     )
 
     assert deck == mock_upload_deck.return_value
