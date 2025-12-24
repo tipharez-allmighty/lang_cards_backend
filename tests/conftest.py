@@ -21,7 +21,7 @@ def mock_db():
 @pytest.fixture
 def mock_create_deck(mocker):
     mock_deck = mocker.patch(
-        "src.decks.router.create_deck",
+        "src.decks.tasks.create_deck_task",
         new_callable=AsyncMock,
         return_value=mock_valid_deck,
     )
