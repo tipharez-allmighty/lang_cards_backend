@@ -8,8 +8,6 @@ from supabase import AsyncClient, create_async_client
 
 from src.config import settings
 
-sdfsdf
-
 engine = create_async_engine(
     url=(
         f"postgresql+asyncpg://{settings.POSTGRES_USER}:"
