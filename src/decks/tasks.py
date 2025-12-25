@@ -18,3 +18,10 @@ async def create_deck_task(user_id: UUID, user_input: str, native_lang: str):
             native_lang=native_lang,
         )
         return DeckBase.model_validate(deck)
+
+
+@broker.task
+async def create_test_deck_task(user_id: UUID, user_input: str, native_lang: str):
+    from src.decks.test_deck import data
+
+    return DeckBase.model_validate(data)

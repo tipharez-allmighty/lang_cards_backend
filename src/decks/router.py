@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from taskiq.depends.progress_tracker import TaskState
 
 from src.decks.schemas import Task, TaskResult
-from src.decks.tasks import create_deck_task
+from src.decks.tasks import create_deck_task, create_test_deck_task
 from src.broker import result_backend
 from src.logger import logger
 
@@ -18,6 +18,16 @@ async def generate_deck(
     native_lang: str = "en",
 ) -> Task:
     task = await create_deck_task.kiq(user_id, user_input, native_lang)
+    return Task(id=task.task_id)
+
+
+@router.post("/test/", response_model=Task)
+async def generate_test_deck(
+    user_id: UUID = uuid4(),
+    user_input: str = "你好，世界",
+    native_lang: str = "en",
+) -> Task:
+    task = await create_test_deck_task.kiq(user_id, user_input, native_lang)
     return Task(id=task.task_id)
 
 
