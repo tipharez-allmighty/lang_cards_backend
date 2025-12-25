@@ -22,6 +22,8 @@ async def create_deck_task(user_id: UUID, user_input: str, native_lang: str):
 
 @broker.task
 async def create_test_deck_task(user_id: UUID, user_input: str, native_lang: str):
+    import asyncio
     from src.decks.test_deck import data
 
+    await asyncio.sleep(3)
     return DeckBase.model_validate(data)
